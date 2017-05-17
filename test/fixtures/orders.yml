@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  customer: 
+  provider: 
+  description: MyText
+  created: 2017-05-17 16:17:59
+  deadline: 2017-05-17 16:17:59
+  state: 1
+
+two:
+  customer: 
+  provider: 
+  description: MyText
+  created: 2017-05-17 16:17:59
+  deadline: 2017-05-17 16:17:59
+  state: 1
