@@ -1,0 +1,1 @@
+1) Jakožto firma chci vylistovat seznam objednávek, co jsem zadal. Patří tato funkcionalita do kontroleru "Company" nebo "Order"?
