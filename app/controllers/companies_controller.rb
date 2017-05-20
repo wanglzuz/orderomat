@@ -5,22 +5,28 @@ class CompaniesController < ApplicationController
     if @company == nil
       return
     end
-    render json: {}, status: 200
+
+    @companies = Company.all
+    render json: @companies, status: 200
 
   end
 
-  private
+private
   def authenticate
-    authenticate_with_http_token do |token, options|
+    token = request.headers["HTTP_ACCESS_TOKEN"]
 
-      @company = Company.find_by(access_token: token)
-      if @company == nil
-        puts "Company is nil.\n"
-        render json: { errors: [ { detail: "Access denied" } ] }, status: 401  # TODO: 2)
-      else
-        puts @company.name
-      end
+    if token == nil
+      render json: { errors: [ { detail: "No access token provided!" } ] }, status: 401  # TODO: 2)
+      return
     end
+
+    @company = Company.find_by(access_token: token)
+    if @company == nil
+      render json: { errors: [ { detail: "Invalid access token!" } ] }, status: 401  # TODO: 2)
+    end
+
   end
+
+
 
 end
