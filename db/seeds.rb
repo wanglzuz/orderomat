@@ -21,7 +21,7 @@ order1 = Order.create({customer: woodchuck, provider: toolsifier,
 
 order2 = Order.create({customer: toolsifier, provider: eatnow,
                       description: "Three bagels with ham and cheese.", created: DateTime.current,
-                       deadline: 8.days.from_now, status: :created})
+                       deadline: 3.days.from_now, status: :created})
 
 order3 = Order.create({customer: woodchuck, provider: eatnow,
                        description: "Three bagels with ham and cheese.", created: 2.days.ago,

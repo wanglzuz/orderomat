@@ -15,7 +15,7 @@ class Company < ApplicationRecord
     if status == nil
       return orders_as_provider
     elsif status == "upcoming"
-      return orders_as_provider.where("deadline < ?", 1.week.from_now)
+      return orders_as_provider.where("deadline < ? AND deadline >= ?", Date.today.next_week, Date.today.beginning_of_week)
     else
       return orders_as_provider.where(:status => status)
     end

@@ -2,12 +2,16 @@ class CompaniesController < ApplicationController
   before_action :authenticate
 
   def index
-    if @company == nil
-      return
-    end
 
     @companies = Company.all
     render json: @companies, status: 200
+
+  end
+
+  def show
+
+    to_show = Company.find(params[:id])
+    render json: to_show, status: 200
 
   end
 

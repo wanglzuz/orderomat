@@ -35,7 +35,7 @@ class OrdersController < ApplicationController
   def show
 
     @order = Order.find(params[:id])
-    if @company.id == @order.customer_id or @company.id == @order.provider_id
+    if @order.is_associated(@company)
       render json: @order, status: 200
     else
       render json: {errors: [{detail:"You are not associated with this order!"}]}, status: 400
