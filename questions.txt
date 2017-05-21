@@ -1,2 +1,3 @@
 1) Jakožto firma chci vylistovat seznam objednávek, co jsem zadal. Patří tato funkcionalita do kontroleru "Company" nebo "Order"?
 2) Autentikaci chci provádět jak v Companies, tak Orders controlleru. Mám tuto metodu napsat někam jen jedenkrát?
+3) Jak se testuje, zda datum "Created" opravdu odpovídá okamžiku vytvoření, když čas je strašně rychlej a už mi utek?

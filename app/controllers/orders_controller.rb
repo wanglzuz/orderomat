@@ -30,6 +30,32 @@ class OrdersController < ApplicationController
 
   def create
 
+    if params[:provider_id] == nil
+      render json: {errors: [{detail:"Missing provider ID!"}]},
+             status: 400
+      return
+    end
+    provider = Company.find(params[:provider_id])
+    customer = @company
+    if provider == customer
+      render json: {errors: [{detail:"You will never profit from ordering goods from your own company!\n(Invalid provider ID)"}]},
+             status: 400
+      return
+    end
+    order = Order.new(created_order_params)
+    order.customer = customer
+    order.provider = provider
+    order.created = DateTime.now
+    order.status = :created
+
+    unless order.save
+      render json: {errors: [{detail:"Some important info missing!"}], validation_errors: order.errors.full_messages},
+             status: 400
+      return
+    end
+
+    render json: order, status: 201
+
   end
 
   def show
@@ -61,6 +87,12 @@ private
     if @company == nil
       render json: { errors: [ { detail: "Invalid access token!" } ] }, status: 401  # TODO: 2)
     end
+
+  end
+
+  def created_order_params
+
+    params.permit(:description, :deadline)
 
   end
 
