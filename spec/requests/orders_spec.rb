@@ -35,7 +35,6 @@ RSpec.describe "Orders", type: :request do
     end
   end
 
-
   describe "POST /orders" do
     context "when I send order to a different company" do
       it "saves article into the database" do
@@ -134,7 +133,95 @@ RSpec.describe "Orders", type: :request do
     end
   end
 
+  describe "PUT /orders/:id" do
 
+    context "when the requested status is 'in_process' or 'sent_out'" do
+      it "only provider can set this up" do
+
+        company1 = Company.create(access_token: "ac3b5afd-cca6-4ed6-aabb-0169e29237ad")
+        company2 = Company.create(access_token: "eb6feed2-78ff-4bbf-898f-43b4c5e7bcb5")
+        order1 = Order.create(customer: company1, provider: company2, description: "Test.",
+                              created: DateTime.now, deadline: 1.week.from_now, status: :created)
+
+        put "/orders/#{order1.id}", :headers => {"HTTP_ACCESS_TOKEN" => company1.access_token},
+                                   :params => {"status" => :in_process}
+        expect(response).to have_http_status 400
+        order1.reload
+        expect(order1.status).to eq "created"
+
+        put "/orders/#{order1.id}", :headers => {"HTTP_ACCESS_TOKEN" => company1.access_token},
+            :params => {"status" => :sent_out}
+        expect(response).to have_http_status 400
+        order1.reload
+        expect(order1.status).to eq "created"
+
+        put "/orders/#{order1.id}", :headers => {"HTTP_ACCESS_TOKEN" => company2.access_token},
+            :params => {"status" => :in_process}
+        expect(response).to have_http_status 200
+        order1.reload
+        expect(order1.status).to eq "in_process"
+
+        put "/orders/#{order1.id}", :headers => {"HTTP_ACCESS_TOKEN" => company2.access_token},
+            :params => {"status" => :sent_out}
+        expect(response).to have_http_status 200
+        order1.reload
+        expect(order1.status).to eq "sent_out"
+
+      end
+    end
+
+    context "when the requested status is 'accepted'" do
+      it "only customer can set this up" do
+
+        company1 = Company.create(access_token: "ac3b5afd-cca6-4ed6-aabb-0169e29237ad")
+        company2 = Company.create(access_token: "eb6feed2-78ff-4bbf-898f-43b4c5e7bcb5")
+        order1 = Order.create(customer: company1, provider: company2, description: "Test.",
+                              created: DateTime.now, deadline: 1.week.from_now, status: :created)
+
+        put "/orders/#{order1.id}", :headers => {"HTTP_ACCESS_TOKEN" => company2.access_token},
+            :params => {"status" => :accepted}
+        expect(response).to have_http_status 400
+        order1.reload
+        expect(order1.status).to eq "created"
+
+        put "/orders/#{order1.id}", :headers => {"HTTP_ACCESS_TOKEN" => company1.access_token},
+            :params => {"status" => :accepted}
+        expect(response).to have_http_status 200
+        order1.reload
+        expect(order1.status).to eq "accepted"
+        
+      end
+    end
+
+    context "when the requested status is anything else / none" do
+      it "returns 400 and does not change the status" do
+
+        company1 = Company.create(access_token: "ac3b5afd-cca6-4ed6-aabb-0169e29237ad")
+        company2 = Company.create(access_token: "eb6feed2-78ff-4bbf-898f-43b4c5e7bcb5")
+        order1 = Order.create(customer: company1, provider: company2, description: "Test.",
+                              created: DateTime.now, deadline: 1.week.from_now, status: :accepted)
+
+        put "/orders/#{order1.id}", :headers => {"HTTP_ACCESS_TOKEN" => company1.access_token},
+            :params => {"status" => :created}
+        expect(response).to have_http_status 400
+        order1.reload
+        expect(order1.status).to eq "accepted"
+
+        put "/orders/#{order1.id}", :headers => {"HTTP_ACCESS_TOKEN" => company1.access_token},
+            :params => {"status" => "krokodyl"}
+        expect(response).to have_http_status 400
+        order1.reload
+        expect(order1.status).to eq "accepted"
+
+        put "/orders/#{order1.id}", :headers => {"HTTP_ACCESS_TOKEN" => company1.access_token}
+        expect(response).to have_http_status 400
+        order1.reload
+        expect(order1.status).to eq "accepted"
+
+      end
+    end
+
+  end
 
 
 

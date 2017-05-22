@@ -72,6 +72,32 @@ class OrdersController < ApplicationController
 
   def update
 
+    status = params[:status]
+    order = Order.find(params[:id])
+    customer = order.customer
+    provider = order.provider
+
+    if status == "in_process" or status == "sent_out"
+      if @company == provider
+        order.update(updated_order_params)
+        render json: {message: "Current order status is '#{Order.find(params[:id]).status}'"}, status: 200
+        return
+      else
+        render json: {errors: [{detail:"You must be the provider!"}]}, status: 400
+        return
+      end
+    elsif status == "accepted"
+      if @company == customer
+        order.update(updated_order_params)
+        render json: {message: "Current order status is '#{Order.find(params[:id]).status}'"}, status: 200
+        return
+      else
+        render json: {errors: [{detail:"You must be the customer!"}]}, status: 400
+      end
+    else
+      render json: {errors: [{detail:"Invalid status!"}]}, status: 400
+    end
+
   end
 
 private
@@ -93,6 +119,12 @@ private
   def created_order_params
 
     params.permit(:description, :deadline)
+
+  end
+
+  def updated_order_params
+
+    params.permit(:status)
 
   end
 
