@@ -189,7 +189,7 @@ RSpec.describe "Orders", type: :request do
         expect(response).to have_http_status 200
         order1.reload
         expect(order1.status).to eq "accepted"
-        
+
       end
     end
 
