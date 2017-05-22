@@ -64,3 +64,8 @@ Despite my vivid imagination I cannot conjure up what else you would
 ever want to do with such a good-for-nothing app; at this point I suspect 
 that you cloned the app repository just to have a laugh about this
  manual. Stop laughing. Stop it. <b>STOP IT NOW!!!</b>
+ 
+ Oh, and by the way, this service is available at https://thawing-depths-99972.herokuapp.com/
+ and you can find the made up companies along with their slightly ridiculous
+orders in the "db/migrate/seeds.rb" file along with some useful access tokens
+ and other strictly private data.
