@@ -1,5 +1,4 @@
 class OrdersController < ApplicationController
-  before_action :authenticate
 
   def index_as_customer
 
@@ -77,44 +76,11 @@ class OrdersController < ApplicationController
     customer = order.customer
     provider = order.provider
 
-    if status == "in_process" or status == "sent_out"
-      if @company == provider
-        order.update(updated_order_params)
-        render json: {message: "Current order status is '#{Order.find(params[:id]).status}'"}, status: 200
-        return
-      else
-        render json: {errors: [{detail:"You must be the provider!"}]}, status: 400
-        return
-      end
-    elsif status == "accepted"
-      if @company == customer
-        order.update(updated_order_params)
-        render json: {message: "Current order status is '#{Order.find(params[:id]).status}'"}, status: 200
-        return
-      else
-        render json: {errors: [{detail:"You must be the customer!"}]}, status: 400
-      end
-    else
-      render json: {errors: [{detail:"Invalid status!"}]}, status: 400
-    end
+    order = OrderManager.new(order).change_state_to('sent_out')
 
   end
 
 private
-  def authenticate
-    token = request.headers["HTTP_ACCESS_TOKEN"]
-
-    if token == nil
-      render json: { errors: [ { detail: "No access token provided!" } ] }, status: 401  # TODO: 2)
-      return
-    end
-
-    @company = Company.find_by(access_token: token)
-    if @company == nil
-      render json: { errors: [ { detail: "Invalid access token!" } ] }, status: 401  # TODO: 2)
-    end
-
-  end
 
   def created_order_params
 

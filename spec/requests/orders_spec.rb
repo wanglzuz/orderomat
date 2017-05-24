@@ -134,14 +134,15 @@ RSpec.describe "Orders", type: :request do
   end
 
   describe "PUT /orders/:id" do
+    before :each do
+        @company1 = Company.create(access_token: "ac3b5afd-cca6-4ed6-aabb-0169e29237ad")
+        @company2 = Company.create(access_token: "eb6feed2-78ff-4bbf-898f-43b4c5e7bcb5")
+        @order1 = Order.create(customer: company1, provider: company2, description: "Test.",
+                              created: DateTime.now, deadline: 1.week.from_now, status: :created)
+    end
 
     context "when the requested status is 'in_process' or 'sent_out'" do
       it "only provider can set this up" do
-
-        company1 = Company.create(access_token: "ac3b5afd-cca6-4ed6-aabb-0169e29237ad")
-        company2 = Company.create(access_token: "eb6feed2-78ff-4bbf-898f-43b4c5e7bcb5")
-        order1 = Order.create(customer: company1, provider: company2, description: "Test.",
-                              created: DateTime.now, deadline: 1.week.from_now, status: :created)
 
         put "/orders/#{order1.id}", :headers => {"HTTP_ACCESS_TOKEN" => company1.access_token},
                                    :params => {"status" => :in_process}
