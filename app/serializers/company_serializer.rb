@@ -1,3 +1,3 @@
-class CompanySerializer < ActiveModel::Serializer
-  attributes :id, :name, :ico
+class CompanySerializer < CompanyInfoSerializer
+  attributes :ico, :created_at
 end

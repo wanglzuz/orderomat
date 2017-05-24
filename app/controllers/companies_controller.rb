@@ -1,17 +1,16 @@
 class CompaniesController < ApplicationController
-  before_action :authenticate
 
   def index
 
     @companies = Company.all
-    render json: @companies, status: 200
+    render json: @companies, status: 200, each_serializer: CompanyInfoSerializer
 
   end
 
   def show
 
     to_show = Company.find(params[:id])
-    render json: to_show, status: 200
+    render json: to_show, status: 200, serializer: CompanySerializer
 
   end
 
@@ -21,6 +20,7 @@ private
 
     if token == nil
       render json: { errors: [ { detail: "No access token provided!" } ] }, status: 401  # TODO: 2)
+      # render json: { message: 'neco se stalo', code: 'AUTHENTICATION_FAILED' }, status: 401  # TODO: 2)
       return
     end
 
